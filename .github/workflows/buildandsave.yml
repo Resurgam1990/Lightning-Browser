@@ -1,0 +1,36 @@
+name: Build and save
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+      - name: Build
+        run: ./gradlew build
+        
+      # 上传至artifact
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: lighting
+          path: |
+            app/build/outputs/**/*.apk
+            app/build/outputs/**/*.aab
+          #path: app/build/outputs/**/*.apk
+          retention-days: 1  # 自动清理时间（可选）
+          if-no-files-found: warn  # 重要！避免构建失败
