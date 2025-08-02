@@ -29,5 +29,4 @@ jobs:
           draft: false
           files: app/build/outputs/**/debug/*.apk  # 只上传debug APK
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用内置token
-		  
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用内置token 
