@@ -1,0 +1,33 @@
+name: Debug APK Release
+
+on:
+  workflow_dispatch:  # 仅手动触发
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: 17
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug  # 生成未签名的debug APK
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: "debug-${{ github.run_id }}"  # 自动生成唯一标签
+          name: "Debug APK ${{ github.run_number }}"
+          body: "Unsigned APK | Commit: ${{ github.sha }}"
+          prerelease: true  # 标记为预发布版本
+          draft: false
+          files: app/build/outputs/**/debug/*.apk  # 只上传debug APK
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # 使用内置token
+		  
